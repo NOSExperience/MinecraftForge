@@ -15,21 +15,6 @@ Here is a short video from Rorax showing how to install and setup Forge.
 
 For support and user questions, visit [http://www.minecraftforge.net](http://www.minecraftforge.net).
  
-# How to install Forge: For Modders
-
-If you wish to setup a new mod for Forge, visit
- [http://files.minecraftforge.net](http://files.minecraftforge.net) and
- select the **MDK** download.
-
-This is the `Modder Developer Kit` - basically, an example mod with all
- the tooling needed to create a Forge mod workspace ready for use in your
- IDE of choice.
-
-Here is a short video from @cpw showing how to install and setup the MDK
- in Intellij.
-
-[![HOWTO Install MDK](https://img.youtube.com/vi/PfmlNiHonV0/0.jpg)](https://www.youtube.com/watch?v=PfmlNiHonV0)
- 
 # How to install Forge: For those wishing to work on Forge itself
 
 If you wish to actually inspect Forge, submit PRs or otherwise work
