@@ -37,6 +37,7 @@ import net.minecraft.command.EntitySelector;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.Ingredient;
@@ -55,8 +56,6 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -65,6 +64,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.fml.common.IEntitySelectorFactory;
+
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -176,7 +177,14 @@ public class GameRegistry
     private static void computeSortedGeneratorList()
     {
         ArrayList<IWorldGenerator> list = Lists.newArrayList(worldGenerators);
-        list.sort(Comparator.comparingInt(o -> worldGeneratorIndex.get(o)));
+        Collections.sort(list, new Comparator<IWorldGenerator>()
+        {
+            @Override
+            public int compare(IWorldGenerator o1, IWorldGenerator o2)
+            {
+                return Ints.compare(worldGeneratorIndex.get(o1), worldGeneratorIndex.get(o2));
+            }
+        });
         sortedGeneratorList = ImmutableList.copyOf(list);
     }
 
@@ -184,7 +192,7 @@ public class GameRegistry
      * This is now private, you should use either ForgeRegistries constants.
      * Or the registry passed in during the RegistryEvent.Register<T> event.
      */
-    private static <K extends IForgeRegistryEntry<K>> K register(K object)
+    public static <K extends IForgeRegistryEntry<K>> K register(K object)
     {
         return (K)GameData.register_impl(object);
     }
@@ -236,29 +244,12 @@ public class GameRegistry
         TileEntity.register(key, tileEntityClass);
     }
 
-    /**
-     * @deprecated set your item's {@link Item#getItemBurnTime(ItemStack)} or subscribe to {@link FurnaceFuelBurnTimeEvent} instead.
-     */
-    @Deprecated
     public static void registerFuelHandler(IFuelHandler handler)
     {
         fuelHandlers.add(handler);
     }
 
-    /**
-     * @deprecated use {@link ForgeEventFactory#getItemBurnTime(ItemStack)}
-     */
-    @Deprecated
     public static int getFuelValue(@Nonnull ItemStack itemStack)
-    {
-        return ForgeEventFactory.getItemBurnTime(itemStack);
-    }
-
-    /**
-     * @deprecated use {@link ForgeEventFactory#getItemBurnTime(ItemStack)}
-     */
-    @Deprecated
-    public static int getFuelValueLegacy(@Nonnull ItemStack itemStack)
     {
         int fuelValue = 0;
         for (IFuelHandler handler : fuelHandlers)
@@ -370,4 +361,6 @@ public class GameRegistry
         }
         return is;
     }
+    
+    
 }
